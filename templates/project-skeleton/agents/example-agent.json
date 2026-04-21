@@ -1,0 +1,11 @@
+# AgenticFlow agent configuration
+# Edit this JSON, then deploy with:
+# af agent create --body @agents/my-agent.json --json
+
+{
+  "name": "my-domain-role-purpose",
+  "tools": [],
+  "project_id": "YOUR_PROJECT_ID",
+  "model": "agenticflow/glm-4.7-flash",
+  "system_prompt": "You are a helpful assistant specialized in..."
+}

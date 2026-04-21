@@ -1,0 +1,17 @@
+# Global code owner for review on PRs
+* @antongulin
+
+# Reference docs should be reviewed by maintainers when platform changes
+/reference/ @antongulin
+
+# Skills are critical — require review
+/skills/ @antongulin
+
+# Public docs can be community-maintained
+/docs/public/ @antongulin
+
+# Demo examples are community-maintained too
+/workspaces/demo/ @antongulin
+
+# Templates affect structure — require owner review
+/templates/ @antongulin

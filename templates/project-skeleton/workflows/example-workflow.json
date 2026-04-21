@@ -1,0 +1,9 @@
+# AgenticFlow workflow configuration
+# Edit this JSON, then deploy with:
+# af workflow create --body @workflows/my-workflow.json --json
+
+{
+  "name": "My Workflow",
+  "nodes": [],
+  "connections": {}
+}

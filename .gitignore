@@ -1,0 +1,13 @@
+.env
+node_modules/
+*.log
+.DS_Store
+package-lock.json
+package.json
+platform-analysis.md
+scripts/test-output/
+workspaces/*/archive/
+*.secret
+*.key
+credentials.json
+service-account.json

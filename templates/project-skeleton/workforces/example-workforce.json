@@ -1,0 +1,15 @@
+# AgenticFlow workforce graph
+# Edit this JSON, then deploy with:
+# af workforce deploy --workforce-id \u003cid\u003e --body @workforces/my-workforce.json --json
+
+{
+  "nodes": [
+    { "name": "trigger", "type": "trigger", "position": {"x":0,"y":0}, "input": {} },
+    { "name": "agent_ceo", "type": "agent", "position": {"x":320,"y":0}, "input": { "agent_id": "\u003cagent_id\u003e" } },
+    { "name": "output", "type": "output", "position": {"x":640,"y":0}, "input": { "message": "..." } }
+  ],
+  "edges": [
+    { "source_node_name": "trigger", "target_node_name": "agent_ceo", "connection_type": "next_step" },
+    { "source_node_name": "agent_ceo", "target_node_name": "output", "connection_type": "next_step" }
+  ]
+}
