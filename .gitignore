@@ -11,3 +11,6 @@ workspaces/*/archive/
 *.key
 credentials.json
 service-account.json
+
+# CodeGraph symbol index: local, per-machine, never committed.
+.codegraph/

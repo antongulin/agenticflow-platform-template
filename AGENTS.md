@@ -25,12 +25,16 @@ agenticflow-platform-template/
 ├── AGENTS.md                  ← You are here — canonical AI agent entry point
 ├── README.md                  ← Human-facing overview
 ├── .env.example               ← Template — copy to .env, add your keys
-├── .gitignore                 ← .env, node_modules, local artifacts
+├── .gitignore                 ← .env, node_modules, CodeGraph index, local artifacts
 │
-├── scripts/                   ← Reusable shell / JS helpers
-│   ├── bootstrap.sh           ← source .env, run af bootstrap --json
-│   ├── verify.sh              ← af doctor --json --strict
-│   └── init-project.js        ← scaffold a new project from templates/
+├── .mcp.json                  ← Project-local MCP config (CodeGraph) — Claude-compatible
+├── .codex/config.toml         ← Project-local MCP config (CodeGraph) — Codex
+├── opencode.jsonc             ← Project-local MCP config (CodeGraph) — OpenCode
+├── .cursor/mcp.json           ← Project-local MCP config (CodeGraph) — Cursor
+├── .vscode/mcp.json           ← Project-local MCP config (CodeGraph) — VS Code
+│
+├── scripts/                   ← Reusable shell helpers
+│   └── bootstrap.sh           ← source .env, run af bootstrap --json
 │
 ├── templates/                 ← Skeletons for new projects
 │   └── project-skeleton/
@@ -67,6 +71,37 @@ agenticflow-platform-template/
 - **Never** create files directly under `workspaces/` or `workspaces/<workspace>/`. Always inside a project folder.
 - **Never** reuse project IDs. If a project dies, move it to an `archive/` subfolder and keep the ID.
 - **Always** keep the canonical version of any payload JSON in this repo — AgenticFlow UI is not the source of truth.
+
+---
+
+## Code intelligence: CodeGraph
+
+CodeGraph (`codegraph`) is an optional local symbol index for developer navigation. It is a
+**developer aid, not a runtime dependency** — nothing in this repo imports it, and it is never
+required to build, run, or use the template.
+
+- **This repo has no useful indexed symbols.** The template is Markdown, YAML, shell, and JSON.
+  A fresh `codegraph init .` reports **5 files / 4 nodes / 0 edges**. The four nodes are file
+  nodes for `templates/project-skeleton/*.json` payloads (misdetected as `liquid`);
+  `.github/workflows/code-review.yml` is included as YAML with zero symbols. Markdown (`AGENTS.md`, `README.md`,
+  `docs/`), `.gitignore`, `.env.example`, `scripts/bootstrap.sh`, and every MCP config are **not
+  indexed**. **Use ordinary file reads** (`Read`/`Grep`/`Glob`) for all of this repo's content;
+  do not rely on CodeGraph results here.
+- **Telemetry is off** (`CODEGRAPH_TELEMETRY=0` in every client config). Keep it off; repo
+  contents must not be sent to a vendor. For direct CLI use, `export CODEGRAPH_TELEMETRY=0` once
+  per shell.
+- **The index and daemon state are local.** `.codegraph/` is gitignored and never committed.
+  Initialize once per checkout with `CODEGRAPH_TELEMETRY=0 codegraph init .`; check health with
+  `codegraph status`.
+- **Committed MCP wiring** (project-local, secret-free): `.mcp.json` (Claude-compatible),
+  `.codex/config.toml` (Codex), `opencode.jsonc` (OpenCode), `.cursor/mcp.json` (Cursor), and
+  `.vscode/mcp.json` (VS Code). Each launches `codegraph serve --mcp`; Cursor and VS Code add
+  `--path ${workspaceFolder}` because their formats support it. Merge new servers into these
+  files; never clobber existing entries and never copy credentials between repos.
+- **Provenance before trust:** a configured entry is not proof a client loaded it. Confirm the
+  file exists and `codegraph --version` resolves before relying on the MCP. Canonical source:
+  `https://github.com/colbymchenry/codegraph` (the `codegraph` binary is a user-managed global
+  install; ask first to add or update it).
 
 ---
 
@@ -388,7 +423,8 @@ When building, assume the `docs/public/` folder will be published. Move any sens
 | `AGENTS.md` | ← This file. AI agent canonical entry point. |
 | `README.md` | Human-facing overview + quick start. |
 | `.env.example` | Template for required environment variables. |
-| `scripts/` | Shell/JS helpers for auth, validation, scaffolding. |
+| `.mcp.json`, `.codex/`, `opencode.jsonc`, `.cursor/`, `.vscode/` | Project-local CodeGraph MCP wiring (secret-free). |
+| `scripts/` | Shell helpers for auth and orientation (`bootstrap.sh`). |
 | `templates/` | Skeletons for new projects. |
 | `reference/` | Live-ish platform documentation (nodes, models, MCP, playbooks). |
 | `docs/` | Global conventions + ADRs + public-facing guides. |

@@ -40,7 +40,7 @@ af bootstrap --json
 | `skills/` | SKILL.md files for AI tools (agent, workforce, MCP, models, credits) |
 | `templates/project-skeleton/` | Ready-to-copy scaffold for new projects |
 | `reference/` | Live platform docs (nodes, models, MCP clients, playbooks) |
-| `scripts/` | Reusable helpers (bootstrap, verify, init-project) |
+| `scripts/` | Reusable helpers (`bootstrap.sh`) |
 | `docs/public/` | External-facing guides (getting started, comparisons) |
 
 ## Quick example: deploy a Hello World agent
@@ -103,6 +103,35 @@ See [`workspaces/demo/README.md`](workspaces/demo/README.md) for the full walkth
 | **Enterprise** | Custom | Custom | Yes |
 
 Extra credits: $20 per 10,000.
+
+## Code intelligence (CodeGraph)
+
+This repo ships project-local [CodeGraph](https://github.com/colbymchenry/codegraph) wiring for
+local symbol navigation. It is a **developer aid only** — nothing here imports it and it is not
+needed to use the template.
+
+Setup (once per checkout; the `codegraph` CLI is a user-managed global install):
+
+```bash
+export CODEGRAPH_TELEMETRY=0
+codegraph init .          # build the local index into .codegraph/
+codegraph status          # check index health
+```
+
+`.codegraph/` is gitignored and never committed. The committed, secret-free MCP configs —
+`.mcp.json` (Claude), `.codex/config.toml` (Codex), `opencode.jsonc` (OpenCode),
+`.cursor/mcp.json` (Cursor), and `.vscode/mcp.json` (VS Code) — each launch `codegraph serve --mcp`;
+Cursor and VS Code also pass `--path ${workspaceFolder}`. Telemetry is disabled via
+`CODEGRAPH_TELEMETRY=0` in every config.
+
+**Coverage — effectively none for this repo.** This template is Markdown, shell, YAML, and JSON.
+A fresh index reports **5 files / 4 nodes / 0 edges**. The four nodes are file nodes for
+`templates/project-skeleton/*.json` payloads (detected as `liquid`);
+`.github/workflows/code-review.yml` is included as YAML with zero symbols. It indexes **zero** code symbols and does
+not index Markdown (`AGENTS.md`, `README.md`, `docs/`), `.gitignore`, `.env.example`,
+`scripts/bootstrap.sh`, or any MCP config. **Use ordinary file reads for this repo's content.**
+CodeGraph is included for consistency with other repos and for forks that add real code. A
+configured entry is not proof a client loaded it; confirm `codegraph --version` resolves first.
 
 ## Contributing
 
